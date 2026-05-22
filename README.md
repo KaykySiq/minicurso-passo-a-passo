@@ -95,37 +95,7 @@ Acessar `http://127.0.0.1:8000` — página de boas-vindas do Django.
 
 
 
-#### 2.1 O que o Django gerou
-
-
-
-```
-
-twitter-clone/
-
-├── twitter_clone/          # Configurações do projeto
-
-│   ├── settings.py         # Configurações gerais
-
-│   ├── urls.py             # Rotas raiz
-
-│   └── wsgi.py
-
-├── posts/                  # Nosso app
-
-│   ├── models.py           # Dados (vazio por enquanto)
-
-│   ├── views.py            # Lógica (vazio por enquanto)
-
-│   └── ...
-
-└── manage.py               # Ferramenta de gerenciamento
-
-```
-
-
-
-#### 2.2 Configurando o settings.py
+#### 2.1 Configurando o settings.py
 
 
 
