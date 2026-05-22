@@ -235,27 +235,7 @@ python manage.py sqlmigrate posts 0001
 
 
 
-#### 4.1 Como funciona o roteamento 
-
-
-
-```
-
-http://127.0.0.1:8000/feed/
-
-        → twitter_clone/urls.py
-
-            → posts/urls.py
-
-                → FeedView
-
-                    → posts/feed.html
-
-```
-
-
-
-#### 4.2 Criando a primeira View
+#### 4.1 Criando a primeira View
 
 
 
@@ -289,7 +269,7 @@ class LandingView(TemplateView):
 
 ```
 
-#### 4.3 Configurando as URLs
+#### 4.2 Configurando as URLs
 
 
 
@@ -342,7 +322,7 @@ urlpatterns = [
 
 
 
-#### 6.1 Criar a pasta de templates e o base.html 
+#### 5.1 Criar a pasta de templates e o base.html 
 
 
 
