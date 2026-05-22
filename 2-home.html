@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Twitter Clone com Django Aprenda Desenvolvimento Web Full-Stack</title>
+  <meta
+    name="description"
+    content="Projeto educacional para estudantes de SI e CC: construa um clone do Twitter com Django e Bootstrap 5. Aprenda CRUD, autenticação, bancos de dados e feeds dinâmicos."
+  />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --tw-blue: #1da1f2;
+      --tw-blue-hover: #1a91da;
+      --tw-blue-soft: rgba(29, 161, 242, 0.1);
+      --tw-bg: #f7f9fa;
+      --tw-text: #14171a;
+      --tw-muted: #657786;
+      --tw-border: #e6ecf0;
+    }
+    * {
+      -webkit-font-smoothing: antialiased;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      background-color: #ffffff;
+      color: var(--tw-text);
+      line-height: 1.6;
+    }
+    /* NAV */
+    .navbar-tw {
+      background-color: rgba(255, 255, 255, 0.92);
+      backdrop-filter: saturate(180%) blur(10px);
+      border-bottom: 1px solid var(--tw-border);
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--tw-text);
+      text-decoration: none;
+    }
+    .brand-logo i { color: var(--tw-blue); font-size: 1.55rem; }
+    .nav-link-tw {
+      color: var(--tw-muted);
+      font-weight: 500;
+      text-decoration: none;
+      padding: 0.4rem 0.85rem;
+      transition: color 0.15s ease;
+    }
+    .nav-link-tw:hover { color: var(--tw-blue); }
+    /* Buttons */
+    .btn-tw {
+      background-color: var(--tw-blue);
+      color: #fff;
+      border-radius: 9999px;
+      padding: 0.6rem 1.4rem;
+      font-weight: 600;
+      border: none;
+      transition: background-color 0.15s ease, transform 0.15s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .btn-tw:hover { background-color: var(--tw-blue-hover); color: #fff; transform: translateY(-1px); }
+    .btn-tw-outline {
+      background-color: transparent;
+      color: var(--tw-blue);
+      border: 1.5px solid var(--tw-blue);
+      border-radius: 9999px;
+      padding: 0.55rem 1.4rem;
+      font-weight: 600;
+      transition: background-color 0.15s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .btn-tw-outline:hover { background-color: var(--tw-blue-soft); color: var(--tw-blue); }
+    /* HERO */
+    .hero {
+      padding: 5rem 0 4rem;
+      background:
+        radial-gradient(900px 500px at 90% -10%, rgba(29, 161, 242, 0.12), transparent 60%),
+        radial-gradient(700px 400px at 0% 30%, rgba(29, 161, 242, 0.06), transparent 60%),
+        #ffffff;
+    }
+    .hero h1 {
+      font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .hero .accent { color: var(--tw-blue); }
+    .hero p.lead {
+      color: var(--tw-muted);
+      font-size: 1.15rem;
+      max-width: 540px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      background: var(--tw-blue-soft);
+      color: var(--tw-blue);
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      margin-bottom: 1.25rem;
+    }
+    /* Hero mockup */
+    .mockup {
+      background: var(--tw-bg);
+      border: 1px solid var(--tw-border);
+      border-radius: 20px;
+      padding: 1rem;
+      box-shadow:
+        0 30px 60px -20px rgba(29, 161, 242, 0.25),
+        0 12px 24px -10px rgba(0, 0, 0, 0.08);
+      max-width: 460px;
+      margin: 0 auto;
+    }
+    .mockup-bar {
+      display: flex; gap: 0.4rem; padding: 0.25rem 0.4rem 0.85rem;
+    }
+    .mockup-bar span {
+      width: 11px; height: 11px; border-radius: 50%; background: #d1d9e0;
+    }
+    .mock-card {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid var(--tw-border);
+      padding: 0.95rem 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--tw-blue); color: #fff;
+      font-weight: 700; display: inline-flex;
+      align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .avatar-grad {
+      background: linear-gradient(135deg, var(--tw-blue) 0%, #6c5ce7 100%);
+    }
+    .mock-input {
+      background: var(--tw-bg);
+      border-radius: 10px;
+      color: var(--tw-muted);
+      padding: 0.55rem 0.85rem;
+      font-size: 0.9rem;
+    }
+    .mock-tweet-btn {
+      background: var(--tw-blue); color: #fff;
+      font-size: 0.78rem; font-weight: 600;
+      border-radius: 9999px; padding: 0.3rem 0.85rem;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+    }
+    .mock-username { font-weight: 700; font-size: 0.92rem; }
+    .mock-time { color: var(--tw-muted); font-size: 0.82rem; }
+    .mock-body { font-size: 0.9rem; margin: 0.35rem 0 0.55rem; }
+    .mock-actions { display: flex; gap: 1.1rem; color: var(--tw-muted); font-size: 0.8rem; }
+    .mock-actions i { margin-right: 0.3rem; }
+    /* Section base */
+    section { padding: 5rem 0; }
+    .section-tag {
+      display: inline-block;
+      color: var(--tw-blue);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      color: var(--tw-muted);
+      font-size: 1.05rem;
+      max-width: 700px;
+    }
+    .bg-soft { background-color: var(--tw-bg); }
+    /* Feature cards */
+    .feature-card {
+      background: #fff;
+      border: 1px solid var(--tw-border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      height: 100%;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 35px -20px rgba(29, 161, 242, 0.3);
+      border-color: rgba(29, 161, 242, 0.4);
+    }
+    .feature-icon {
+      width: 52px; height: 52px;
+      border-radius: 12px;
+      background: var(--tw-blue-soft);
+      color: var(--tw-blue);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .feature-card h5 { font-weight: 700; margin-bottom: 0.5rem; }
+    .feature-card p { color: var(--tw-muted); margin: 0; font-size: 0.95rem; }
+    /* Audience cards */
+    .audience-card {
+      background: #fff;
+      border: 1px solid var(--tw-border);
+      border-radius: 20px;
+      padding: 2.25rem;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    .audience-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--tw-blue);
+    }
+    .audience-icon {
+      width: 60px; height: 60px;
+      border-radius: 16px;
+      background: var(--tw-blue);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      margin-bottom: 1.25rem;
+    }
+    .audience-card h4 { font-weight: 800; margin-bottom: 0.75rem; }
+    .audience-card p { color: var(--tw-muted); margin: 0; }
+    /* About */
+    .about-card {
+      background: linear-gradient(135deg, #fff, var(--tw-bg));
+      border: 1px solid var(--tw-border);
+      border-radius: 24px;
+      padding: 3rem;
+    }
+    .stat-pill {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: var(--tw-blue-soft); color: var(--tw-blue);
+      font-weight: 600; font-size: 0.85rem;
+      padding: 0.4rem 0.85rem; border-radius: 9999px;
+      margin: 0.25rem 0.25rem 0 0;
+    }
+    /* CTA strip */
+    .cta-strip {
+      background: linear-gradient(135deg, var(--tw-blue), #0d8ed9);
+      border-radius: 24px;
+      padding: 3rem;
+      color: #fff;
+      text-align: center;
+    }
+    .cta-strip h3 { font-weight: 800; font-size: clamp(1.5rem, 2.5vw, 2rem); }
+    .btn-light-tw {
+      background: #fff; color: var(--tw-blue);
+      border-radius: 9999px; padding: 0.65rem 1.6rem;
+      font-weight: 700; border: none;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      transition: background 0.15s ease;
+    }
+    .btn-light-tw:hover { background: #f0f8ff; color: var(--tw-blue); }
+    .btn-ghost-white {
+      background: transparent; color: #fff;
+      border: 1.5px solid rgba(255,255,255,0.7);
+      border-radius: 9999px; padding: 0.6rem 1.6rem;
+      font-weight: 700; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      transition: background 0.15s ease;
+    }
+    .btn-ghost-white:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    /* Footer */
+    footer {
+      background: var(--tw-bg);
+      border-top: 1px solid var(--tw-border);
+      padding: 2.5rem 0 1.75rem;
+      color: var(--tw-muted);
+    }
+    footer a { color: var(--tw-muted); text-decoration: none; margin: 0 0.5rem; }
+    footer a:hover { color: var(--tw-blue); }
+    .social-icon {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid var(--tw-border);
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--tw-muted); margin: 0 0.25rem;
+      transition: all 0.15s ease;
+    }
+    .social-icon:hover { color: var(--tw-blue); border-color: var(--tw-blue); }
+    @media (max-width: 768px) {
+      section { padding: 3.5rem 0; }
+      .hero { padding: 3rem 0; }
+      .about-card, .cta-strip { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav class="navbar navbar-expand-lg navbar-tw sticky-top py-2">
+    <div class="container">
+      <a class="brand-logo" href="{% url 'landing' %}">
+        <i class="bi bi-twitter"></i>
+        <span>Twitter Clone</span>
+      </a>
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <i class="bi bi-list fs-3"></i>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="mainNav">
+        <div class="d-flex flex-lg-row flex-column align-items-lg-center gap-lg-1 gap-2 py-2 py-lg-0">
+          <a class="nav-link-tw" href="#sobre">Sobre</a>
+          <a class="nav-link-tw" href="#aprender">O Que Aprender</a>
+          <a class="nav-link-tw" href="#publico">Para Você</a>
+          <a class="btn btn-tw ms-lg-2" href="{% url 'signup' %}">Participar</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+          <span class="hero-badge">
+            <i class="bi bi-mortarboard-fill"></i> Projeto Educacional &middot; Estudantes de SI e CC
+          </span>
+          <h1>
+            Domine o <span class="accent">Django</span> Construindo um Clone do Twitter
+          </h1>
+          <p class="lead mt-3">
+            Um projeto prático desenvolvido para estudantes universitários e entusiastas
+            da tecnologia aprenderem desenvolvimento web full-stack do zero.
+          </p>
+          <div class="d-flex flex-wrap gap-3 mt-4">
+            <a href="{% url 'signup' %}" class="btn-tw">
+              <i class="bi bi-rocket-takeoff"></i> Começar / Participar
+            </a>
+            <a href="https://github.com/Anthonyysm/minicurso-aprendendo-a-aprender" target="_blank" rel="noopener" class="btn-tw-outline">
+              <i class="bi bi-github"></i> Ver no GitHub
+            </a>
+          </div>
+          <div class="d-flex flex-wrap gap-4 mt-4 text-muted small">
+            <span><i class="bi bi-check-circle-fill me-1" style="color: var(--tw-blue);"></i> Para iniciantes</span>
+            <span><i class="bi bi-check-circle-fill me-1" style="color: var(--tw-blue);"></i> Stack do mundo real</span>
+            <span><i class="bi bi-check-circle-fill me-1" style="color: var(--tw-blue);"></i> Código aberto</span>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="mockup">
+            <div class="mockup-bar">
+              <span></span><span></span><span></span>
+            </div>
+            <!-- Compose box -->
+            <div class="mock-card">
+              <div class="d-flex gap-2 align-items-start">
+                <div class="avatar avatar-grad">
+                  {% if user.is_authenticated %}{{ user.username|first|upper }}{% else %}?{% endif %}
+                </div>
+                <div class="flex-grow-1">
+                  {% if user.is_authenticated %}
+                  <a href="{% url 'post-create' %}" class="mock-input d-block text-decoration-none" style="cursor:pointer;">
+                    O que está acontecendo, {{ user.username }}?
+                  </a>
+                  {% else %}
+                  <a href="{% url 'login' %}" class="mock-input d-block text-decoration-none" style="cursor:pointer;">
+                    Faça login para postar...
+                  </a>
+                  {% endif %}
+                  <div class="d-flex justify-content-between align-items-center mt-2">
+                    <small class="text-muted">0 / 280</small>
+                    <span class="mock-tweet-btn"><i class="bi bi-send-fill"></i> Postar</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Posts reais do banco de dados -->
+            {% if recent_posts %}
+              {% for post in recent_posts %}
+                <div class="mock-card {% if forloop.last %}mb-0{% endif %}">
+                  <div class="d-flex gap-2">
+                    <div class="avatar avatar-grad">{{ post.author.username|first|upper }}</div>
+                    <div class="flex-grow-1">
+                      <div>
+                        <span class="mock-username">{{ post.author.username }}</span>
+                        <span class="mock-time">&bull; {{ post.created_at|timesince }} atrás</span>
+                      </div>
+                      <p class="mock-body">{{ post.content|truncatechars:100 }}</p>
+                      <div class="mock-actions">
+                        <a href="{% url 'post-detail' post.pk %}" class="text-decoration-none text-muted">
+                          <span><i class="bi bi-chat"></i> Ver</span>
+                        </a>
+                        <span><i class="bi bi-heart"></i> {{ post.likes.count }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <!-- Posts de exemplo quando o banco está vazio -->
+              <div class="mock-card">
+                <div class="d-flex gap-2">
+                  <div class="avatar">G</div>
+                  <div class="flex-grow-1">
+                    <div><span class="mock-username">glauber</span> <span class="mock-time">&bull; 2 min</span></div>
+                    <p class="mock-body">Acabei de subir meu primeiro app Django! 🚀</p>
+                    <div class="mock-actions">
+                      <span><i class="bi bi-chat"></i> Ver</span>
+                      <span><i class="bi bi-heart"></i> 12</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mock-card mb-0">
+                <div class="d-flex gap-2">
+                  <div class="avatar">A</div>
+                  <div class="flex-grow-1">
+                    <div><span class="mock-username">ana</span> <span class="mock-time">&bull; 8 min</span></div>
+                    <p class="mock-body">Bootstrap 5 + Django = interface limpa e produtiva. ❤️</p>
+                    <div class="mock-actions">
+                      <span><i class="bi bi-chat"></i> Ver</span>
+                      <span><i class="bi bi-heart"></i> 5</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SOBRE -->
+  <section id="sobre">
+    <div class="container">
+      <div class="about-card">
+        <div class="row align-items-center g-4">
+          <div class="col-md-7">
+            <span class="section-tag">Sobre o Projeto</span>
+            <h2 class="section-title">Aprenda back-end através de um produto real.</h2>
+            <p class="section-sub mb-3">
+              Teoria é ótima mas nada ensina como colocar algo real no ar.
+              Este projeto te guia pela construção do núcleo do Twitter usando
+              <strong>Django</strong> e <strong>Bootstrap 5</strong>: o laboratório
+              perfeito para entender operações CRUD, autenticação, bancos de dados
+              relacionais e feeds dinâmicos.
+            </p>
+            <p class="section-sub mb-0">
+              Ao final, você terá uma aplicação pronta para o portfólio e
+              a confiança para criar suas próprias ideias full-stack.
+            </p>
+          </div>
+          <div class="col-md-5">
+            <div>
+              <span class="stat-pill"><i class="bi bi-code-slash"></i> Python &amp; Django</span>
+              <span class="stat-pill"><i class="bi bi-bootstrap"></i> Bootstrap 5</span>
+              <span class="stat-pill"><i class="bi bi-database-fill"></i> SQLite / Postgres</span>
+              <span class="stat-pill"><i class="bi bi-shield-lock-fill"></i> Auth &amp; Sessões</span>
+              <span class="stat-pill"><i class="bi bi-diagram-3-fill"></i> Arquitetura MVT</span>
+              <span class="stat-pill"><i class="bi bi-git"></i> Git &amp; GitHub</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- O QUE VOCÊ VAI APRENDER -->
+  <section id="aprender" class="bg-soft">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="section-tag">O Que Você Vai Aprender</span>
+        <h2 class="section-title">Um currículo focado, do início ao fim.</h2>
+        <p class="section-sub mx-auto">
+          Do primeiro model a um feed autenticado e funcional cada etapa
+          é pensada para construir habilidades práticas e transferíveis.
+        </p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-server"></i></div>
+            <h5>Backend com Django</h5>
+            <p>Models, views, URLs e a robusta arquitetura MVT que sustenta apps em produção.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-bootstrap"></i></div>
+            <h5>Interface com Bootstrap 5</h5>
+            <p>Criando interfaces responsivas e modernas sem se preocupar com CSS do zero.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-database-fill-gear"></i></div>
+            <h5>Banco de Dados e CRUD</h5>
+            <p>Gerenciamento de posts, usuários e datas com persistência confiável via ORM.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-shield-lock-fill"></i></div>
+            <h5>Autenticação</h5>
+            <p>Login, logout e gerenciamento de sessões de usuário do jeito certo.</p>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-5">
+        <a href="{% url 'feed' %}" class="btn-tw-outline">
+          <i class="bi bi-eye"></i> Ver o App
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÚBLICO-ALVO -->
+  <section id="publico">
+    <div class="container">
+      <div class="text-center mb-5">
+        <span class="section-tag">Para Quem É</span>
+        <h2 class="section-title">Feito para construtores curiosos.</h2>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="audience-card">
+            <div class="audience-icon"><i class="bi bi-mortarboard-fill"></i></div>
+            <h4>Estudantes Universitários</h4>
+            <p>
+              Fortaleça seu portfólio acadêmico e coloque em prática princípios
+              reais de engenharia de software por meio de um projeto que recrutadores
+              reconhecem. Ideal para graduandos de SI e CC.
+            </p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="audience-card">
+            <div class="audience-icon"><i class="bi bi-people-fill"></i></div>
+            <h4>Convidados e Iniciantes</h4>
+            <p>
+              Entre no desenvolvimento full-stack com orientação amigável e
+              estruturada. Sem experiência prévia em Django necessária só
+              curiosidade e vontade de construir.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="participar" class="pt-0">
+    <div class="container">
+      <div class="cta-strip">
+        <h3 class="mb-2">Pronto para construir seu primeiro app full-stack?</h3>
+        <p class="mb-4 opacity-75">Participe do projeto, clone o repositório e coloque no ar algo de que você se orgulhe.</p>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+          <a href="{% url 'signup' %}" class="btn-light-tw">
+            <i class="bi bi-rocket-takeoff"></i> Criar minha conta
+          </a>
+          <a href="{% url 'login' %}" class="btn-ghost-white">
+            <i class="bi bi-box-arrow-in-right"></i> Já tenho conta
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="row align-items-center g-3">
+        <div class="col-md-6 text-center text-md-start">
+          <a class="brand-logo mb-2 d-inline-flex" href="{% url 'landing' %}">
+            <i class="bi bi-twitter"></i>
+            <span>Twitter Clone</span>
+          </a>
+          <p class="mb-0 small">
+            Criado para o Projeto de Extensão do Curso de Sistemas de Informação.
+          </p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <a href="https://github.com/Anthonyysm/minicurso-aprendendo-a-aprender" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub"><i class="bi bi-github"></i></a>
+          <a href="{% url 'feed' %}" class="social-icon" aria-label="Ver o App"><i class="bi bi-twitter"></i></a>
+          <p class="mt-3 mb-0 small">&copy; 2026 Twitter Clone Project. Todos os direitos reservados.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Feed{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<div class="post-card p-3 mb-4">
+    <div class="d-flex gap-3">
+        <div class="avatar">{{ user.username|first|upper }}</div>
+        <div class="flex-grow-1">
+            <form method="post" action="{% url 'post-create' %}">
+                {% csrf_token %}
+                {{ form.content }}
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <span class="small text-muted" id="counter">0 / 280</span>
+                    <button class="btn btn-primary btn-sm rounded-pill px-4">
+                        <i class="bi bi-send me-1"></i>Tweetar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="text-center post-card p-5 mb-4">
+    <i class="bi bi-chat-square-text d-block mb-3" style="font-size: 3rem; color: var(--primary); opacity: 0.6;"></i>
+    <h5 class="fw-bold mb-2">Bem-vindo ao Twitter Clone!</h5>
+    <p class="text-muted mb-3">Faça login para publicar posts e interagir com a comunidade.</p>
+    <a href="{% url 'login' %}" class="btn btn-primary rounded-pill px-4">Entrar</a>
+</div>
+{% endif %}
+
+<div class="d-flex align-items-center mb-3 px-1">
+    <h6 class="fw-bold mb-0 text-secondary">
+        <i class="bi bi-clock me-1"></i>Posts recentes
+    </h6>
+    <span class="badge bg-primary ms-2 rounded-pill">{{ posts|length }}</span>
+</div>
+
+{% for post in posts %}
+<div class="post-card p-3 mb-3">
+    <div class="d-flex gap-3">
+        <div class="avatar">{{ post.author.username|first|upper }}</div>
+        <div class="flex-grow-1">
+            <div class="d-flex align-items-center gap-1">
+                <span class="post-author">{{ post.author.username }}</span>
+                <span class="post-time">· {{ post.created_at|timesince }} atrás</span>
+            </div>
+            <p class="mt-2 mb-2" style="line-height: 1.5;">{{ post.content }}</p>
+            <div class="d-flex align-items-center gap-1 pt-1 border-top">
+                <a href="{% url 'post-detail' post.pk %}" class="action-btn text-muted text-decoration-none">
+                    <i class="bi bi-chat me-1"></i><span class="small">Ver</span>
+                </a>
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'post-like' post.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="action-btn btn border-0 {% if user in post.likes.all %}like-btn liked{% else %}text-muted{% endif %}">
+                        <i class="bi {% if user in post.likes.all %}bi-heart-fill{% else %}bi-heart{% endif %} me-1"></i><span class="small">{{ post.likes.count }}</span>
+                    </button>
+                </form>
+                {% endif %}
+                {% if user == post.author %}
+                <a href="{% url 'post-delete' post.pk %}" class="action-btn delete-btn text-muted text-decoration-none ms-auto">
+                    <i class="bi bi-trash me-1"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="text-center empty-state">
+    <i class="bi bi-pencil-square d-block mb-3"></i>
+    <h5 class="text-muted fw-semibold">Nenhum post ainda</h5>
+    <p class="text-muted small">Seja o primeiro a compartilhar algo!</p>
+</div>
+{% endfor %}
+
+{% if is_paginated %}
+<div class="d-flex justify-content-center gap-2 mt-4">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary btn-sm rounded-pill">
+        <i class="bi bi-chevron-left me-1"></i>Anterior
+    </a>
+    {% endif %}
+    <span class="btn btn-sm btn-light rounded-pill disabled">{{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary btn-sm rounded-pill">
+        Próxima<i class="bi bi-chevron-right ms-1"></i>
+    </a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const textarea = document.querySelector('textarea[name="content"]');
+    const counter = document.getElementById('counter');
+    if (textarea) {
+        textarea.addEventListener('input', function () {
+            counter.textContent = this.value.length + ' / 280';
+            if (this.value.length > 280) {
+                counter.classList.add('text-danger');
+            } else {
+                counter.classList.remove('text-danger');
+            }
+        });
+    }
+</script>
+{% endblock %}
