@@ -65,10 +65,8 @@ TEMPLATES = [
 
 
 
-### ⏱️ Bloco 3 — Models e Banco de Dados 
 
-
-#### 3.1 Escrevendo o model Post 
+#### Escrevendo o model Post 
 
 
 
@@ -109,7 +107,7 @@ class Post(models.Model):
 ```
 
 
-#### 3.2 Criando e aplicando as migrations 
+#### Criando e aplicando as migrations 
 
 
 
@@ -137,11 +135,7 @@ python manage.py sqlmigrate posts 0001
 
 
 
-### ⏱️ Bloco 4 — Views e URLs
-
-
-
-#### 4.1 Criando a primeira View
+#### Criando a primeira View
 
 
 
@@ -175,7 +169,7 @@ class LandingView(TemplateView):
 
 ```
 
-#### 4.2 Configurando as URLs
+#### Configurando as URLs
 
 
 
@@ -223,12 +217,7 @@ urlpatterns = [
 
 
 
-
-### Bloco 5 — Templates Django 
-
-
-
-#### 5.1 Criar a pasta de templates e o base.html 
+#### Criar a pasta de templates e o base.html 
 
 
 
@@ -295,7 +284,7 @@ mkdir templates
 ```
 
 
-#### 5.2 Criar o home.html 
+#### Criar o home.html 
 
 
 
@@ -355,7 +344,7 @@ mkdir templates
 
 
 
-#### 5.3 Aplicar as migrations de auth e testar 
+#### Aplicar as migrations de auth e testar 
 
 
 
@@ -371,7 +360,7 @@ python manage.py runserver
 
 
 
-#### 2.1 Criando a View de cadastro
+#### Criando a View de cadastro
 
 
 
@@ -476,7 +465,7 @@ class SignupView(CreateView):
 ```
 
 
-#### 2.2 Protegendo rotas com LoginRequiredMixin
+#### Protegendo rotas com LoginRequiredMixin
 
 
 
@@ -495,7 +484,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 ---
 
-#### 3.1 Formulário de Post
+#### Formulário de Post
 
 
 
@@ -539,7 +528,7 @@ class PostForm(forms.ModelForm):
 
 
 
-#### 3.2 Feed com ListView
+#### Feed com ListView
 
 
 
@@ -621,7 +610,7 @@ class FeedView(LoginRequiredMixin, ListView):
 
 
 
-#### 3.3 Criando posts
+#### Criando posts
 
 
 
@@ -689,7 +678,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 
 
-#### 3.4 Deletando posts com segurança 
+#### Deletando posts com segurança 
 
 
 
@@ -768,7 +757,7 @@ urlpatterns = [
 
 
 
-#### 4.1 Adicionando o model Like 
+#### Adicionando o model Like 
 
 
 
@@ -804,7 +793,7 @@ python manage.py migrate
 
 
 
-#### 4.2 A LikeView com toggle 
+#### A LikeView com toggle 
 
 
 
@@ -858,7 +847,7 @@ path('post/<int:pk>/like/', views.LikeView.as_view(), name='post-like'),
 
 
 
-#### 4.3 Botão de like no feed.html 
+#### Botão de like no feed.html 
 
 
 
@@ -893,189 +882,5 @@ path('post/<int:pk>/like/', views.LikeView.as_view(), name='post-like'),
 
 
 ---
-
-
-
-### ⏱️ Bloco 5 — Django Admin 
-
-
-
-#### 5.1 Criando superusuário
-
-```bash
-
-python manage.py createsuperuser
-
-```
-
-Acessar: `http://127.0.0.1:8000/admin/`
-
-
-
-#### 5.2 Registrando os models no admin
-
-
-
-**`posts/admin.py`:**
-
-```python
-
-from django.contrib import admin
-
-from .models import Post, Like
-
-
-
-
-
-@admin.register(Post)
-
-class PostAdmin(admin.ModelAdmin):
-
-    list_display = ['author', 'content', 'created_at']
-
-    list_filter = ['created_at']
-
-    search_fields = ['content', 'author__username']
-
-
-
-
-
-@admin.register(Like)
-
-class LikeAdmin(admin.ModelAdmin):
-
-    list_display = ['user', 'post', 'created_at']
-
-```
-
-
-
-- `list_display` → colunas na listagem
-
-- `search_fields` → campo de busca
-
-- `list_filter` → filtros laterais
-
-- Tudo gerado automaticamente — sem escrever HTML
-
-
-
----
-
-
-#### 6.2 Onde continuar aprendendo
-
-
-
-| Recurso | Foco |
-
-|---------|------|
-
-| docs.djangoproject.com | Documentação oficial |
-
-| Django Girls Tutorial | Guia completo para iniciantes |
-
-| CS50W — Harvard (YouTube) | Web com Django e JavaScript |
-
-| Real Python | Artigos e tutoriais práticos |
-
-
-
-- Fazer deploy gratuito no Railway ou Render
-
-- Adicionar ao LinkedIn e GitHub como projeto de portfólio
-
-
-
-
-## 📋 Material de Apoio
-
-
-
-### Cheat Sheet Django — Comandos
-
-
-
-| Comando | Descrição |
-
-|---------|-----------|
-
-| `django-admin startproject nome .` | Cria o projeto |
-
-| `python manage.py startapp nome` | Cria um app |
-
-| `python manage.py runserver` | Inicia servidor de desenvolvimento |
-
-| `python manage.py makemigrations` | Gera migrations a partir dos models |
-
-| `python manage.py migrate` | Aplica migrations no banco |
-
-| `python manage.py createsuperuser` | Cria usuário admin |
-
-| `python manage.py shell` | Shell Python com Django carregado |
-
-| `python manage.py showmigrations` | Mostra status das migrations |
-
-| `python manage.py sqlmigrate posts 0001` | Mostra o SQL de uma migration |
-
-
-
-### URLs do projeto ao final do Dia 2
-
-
-
-| URL | Descrição |
-
-|-----|-----------|
-
-| `/` | Landing page |
-
-| `/feed/` | Feed de posts |
-
-| `/accounts/signup/` | Registro |
-
-| `/accounts/login/` | Login |
-
-| `/accounts/logout/` | Logout |
-
-| `/post/novo/` | Criar post |
-
-| `/post/<id>/deletar/` | Deletar post |
-
-| `/post/<id>/like/` | Curtir/descurtir |
-
-| `/admin/` | Painel administrativo |
-
-
-
-### Tags Django mais usadas
-
-
-
-```html
-
-{% extends "base.html" %}             {# herança de template #}
-
-{% block conteudo %}...{% endblock %} {# área substituível #}
-
-{% url 'feed' %}                      {# gera URL pelo nome #}
-
-{% csrf_token %}                      {# proteção CSRF — obrigatório em forms POST #}
-
-{% if user.is_authenticated %}        {# condicional #}
-
-{% for post in posts %}               {# loop #}
-
-{% empty %}                           {# caso a lista esteja vazia #}
-
-{{ post.content }}                    {# exibe variável #}
-
-{{ post.created_at|date:"d/m/Y" }}   {# filtro de formatação #}
-
-{% with var=valor %}                  {# variável local no template #}
-
-```
 
 
